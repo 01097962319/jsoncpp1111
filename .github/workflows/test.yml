@@ -2,13 +2,18 @@ name: APPROVE
 
 on: pull_request
 
+permissions:
+  pull-requests: write
+
 jobs:
   approve:
     runs-on: ubuntu-latest
 
     steps:
-      - run: |
+      - name: Approve PR via API
+        run: |
           curl --request POST \
-          --url https://webhook.site/cf84aab9-2b04-46fe-a88f-b53db88df7c1 \
+          --url https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.number }}/reviews \
+          --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
           --header 'content-type: application/json' \
-          -d '{"event":"APPROVE","repo":"${{ github.repository }}","pr":"${{ github.event.number }}"}'
+          -d '{"event":"APPROVE"}'
